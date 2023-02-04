@@ -21,6 +21,7 @@ from . import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("user/", include('user.urls')),
+    path("social/",include("social.urls")),
 ]
 
 if settings.DEBUG:

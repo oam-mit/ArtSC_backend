@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from artsc.consts import Status
 
 from .models import Post,Category
-from .serializers import PostSerializer
+from .serializers import PostSerializer,CategorySerializer
 # Create your views here.
 
 @api_view(["GET"])
@@ -26,7 +26,7 @@ def get_all_posts(request):
 @permission_classes([IsAuthenticated])
 def upload_post(request):
     try:
-        category = Category.objects.get(text = request.data.get("category"))
+        category = Category.objects.get(id = request.data.get("category_id"))
         post = Post.objects.create(
             user = request.user,
             image = request.data.get("image"),
@@ -41,5 +41,19 @@ def upload_post(request):
             "status":Status.UNSUCCESSFUL,
             "error":e.__str__()
         })
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_categories(request):
+    categories = Category.objects.filter()
+
+    serializer = CategorySerializer(categories,many = True)
+
+    return Response({
+        "status":Status.SUCCESSFUL,
+        "categories":serializer.data
+    })
+
 
 
