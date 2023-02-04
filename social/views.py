@@ -1,3 +1,45 @@
 from django.shortcuts import render
 
+from rest_framework.decorators import api_view,authentication_classes,permission_classes
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+from artsc.consts import Status
+
+from .models import Post,Category
+from .serializers import PostSerializer
 # Create your views here.
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_all_posts(request):
+    posts = Post.objects.filter()
+    serializer = PostSerializer(posts,many=True)
+    return Response({
+        "status":Status.SUCCESSFUL,
+        "posts":serializer.data
+    })
+
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def upload_post(request):
+    try:
+        category = Category.objects.get(text = request.data.get("category"))
+        post = Post.objects.create(
+            user = request.user,
+            image = request.data.get("image"),
+            description = request.data.get("description"),
+            category = category
+        )
+        return Response({
+            "successful":Status.SUCCESSFUL
+        })
+    except Exception as e:
+        return Response({
+            "status":Status.UNSUCCESSFUL,
+            "error":e.__str__()
+        })
+
+

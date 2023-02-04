@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 
+from artsc.consts import Status
+
 from .models import User
 from .serializers import UserSerializer
 # Create your views here.
@@ -27,12 +29,12 @@ def register_user(request):
             })
         except Exception as e:
             return Response({
-                "status":"unsuccessful",
+                "status":Status.SUCCESSFUL,
                 "error":e.__str__()
             })
     else:
         return Response({
-            "status":"unsuccessful",
+            "status":Status.UNSUCCESSFUL,
             "error":"username already exists"
         })
 
@@ -47,7 +49,7 @@ class Login(ObtainAuthToken):
         if serializer.is_valid(raise_exception=False):
             user = serializer.validated_data['user']
             token, created = Token.objects.get_or_create(user=user)
-            context['status']="successful"
+            context['status']=Status.SUCCESSFUL
             context['token']=token.key
             context['email']=user.email
             context['first_name']=user.first_name
@@ -55,7 +57,7 @@ class Login(ObtainAuthToken):
             context["profile_photo"] = user.profile_photo.url
 
         else:
-            context['status']="unsuccessful"
+            context['status']=Status.UNSUCCESSFUL
             context["error"] = "Invalid Credentials"
         return Response(context)
     
