@@ -15,5 +15,6 @@ class User(AbstractUser):
 
 @receiver(post_save,sender=User)
 def create_token(sender,instance=None,created=False,**kwargs):
+    print("Called")
     if created:
         Token.objects.create(user=instance)

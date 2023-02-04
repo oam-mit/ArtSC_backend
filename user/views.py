@@ -19,17 +19,19 @@ def register_user(request):
     if serializer.is_valid():
         try:
             user =serializer.save()
+            
             return Response({
                 "status":"successful",
                 "username":user.username,
                 "first_name":user.first_name,
                 "last_name":user.last_name,
                 "email":user.email,
-                "profile_photo":user.profile_photo.url
+                "profile_photo":user.profile_photo.url,
+                "token":user.auth_token
             })
         except Exception as e:
             return Response({
-                "status":Status.SUCCESSFUL,
+                "status":Status.UNSUCCESSFUL,
                 "error":e.__str__()
             })
     else:
@@ -55,6 +57,7 @@ class Login(ObtainAuthToken):
             context['first_name']=user.first_name
             context['last_name']=user.last_name
             context["profile_photo"] = user.profile_photo.url
+            context["username"] = user.username
 
         else:
             context['status']=Status.UNSUCCESSFUL
