@@ -7,8 +7,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from artsc.consts import Status
+from user.models import User
 
-from .models import Post,Category
+from .models import Post,Category,Friend
 from .serializers import PostSerializer,CategorySerializer
 # Create your views here.
 
@@ -36,11 +37,6 @@ def upload_post(request):
             category = category
         )
 
-        files = {'file': open(post.image.path,'rb')}
-
-        r = requests.post("http://172.20.10.2:8000", files=files)
-
-        print(r.json())
 
         return Response({
             "successful":Status.SUCCESSFUL
@@ -64,6 +60,30 @@ def get_categories(request):
         "categories":serializer.data
     })
 
+@api_view(["POST"])
+def predict_category(request):
+    files = {'file': request.data.get("file").read()}
+
+    r = requests.post("http://172.20.10.2:8000", files=files)
+    
+    return Response(r.json())
 
 
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def send_friend_request(request):
+    try:
+        to = User.objects.get(username=request.data.get("username"))
+        Friend.objects.create(
+            user1=request.user,
+            user2=to
+        )
+        return Response({
+            "status":Status.SUCCESSFUL
+        })
+    except Exception as e:
+        return Response({
+            "status":Status.UNSUCCESSFUL,
+            "error":e.__str__()
+        })
 
