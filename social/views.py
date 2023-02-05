@@ -16,7 +16,7 @@ from .serializers import PostSerializer,CategorySerializer
 
 @login_required
 def index(request):
-    return render(request,"social/index.html")
+    return render(request,"index.html")
 
 
 @api_view(["GET"])
