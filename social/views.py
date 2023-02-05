@@ -1,3 +1,5 @@
+import requests
+
 from django.shortcuts import render
 
 from rest_framework.decorators import api_view,authentication_classes,permission_classes
@@ -33,6 +35,13 @@ def upload_post(request):
             description = request.data.get("description"),
             category = category
         )
+
+        files = {'file': open(post.image.path,'rb')}
+
+        r = requests.post("http://172.20.10.2:8000", files=files)
+
+        print(r.json())
+
         return Response({
             "successful":Status.SUCCESSFUL
         })
@@ -54,6 +63,7 @@ def get_categories(request):
         "status":Status.SUCCESSFUL,
         "categories":serializer.data
     })
+
 
 
 
