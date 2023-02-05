@@ -97,4 +97,20 @@ def get_user_data(request):
             "error":e.__str__()
         })
 
- 
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def change_profile_picture(request):
+    try:
+        request.user.profile_photo = request.data.get("image")
+        request.user.save()
+    except Exception as e:
+        return Response({
+            "status":Status.UNSUCCESSFUL,
+            "error": e.__str__()
+        })
+
+    return Response({
+        "status":Status.SUCCESSFUL,
+        "profile_photo":request.user.profile_photo.url
+    })
