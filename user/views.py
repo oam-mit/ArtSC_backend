@@ -1,5 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
+from django.urls import reverse
 from django.db.models import Q
+from django.contrib.auth import authenticate,logout,login
+
 
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -13,6 +16,25 @@ from social.models import Friend
 from .models import User
 from .serializers import UserSerializer
 # Create your views here.
+
+def login_user(request):
+    if request.method =="POST":
+        print(request.GET)
+        print(request.POST.get('username'))
+        print(request.POST.get("password"))
+        user = authenticate(username = request.POST.get('username'),password = request.POST.get("password"))
+
+        if user is not None:
+            login(request,user)
+            return redirect(reverse("social:index"))
+        else:
+            return render(request,"user/login.html")
+    return render(request,"user/login.html")
+
+def logout_user(request):
+    logout(request)
+    return redirect(reverse("user:login"))
+
 
 @api_view(["POST"])
 def register_user(request):
@@ -72,7 +94,7 @@ class Login(ObtainAuthToken):
 @permission_classes([IsAuthenticated])
 def get_user_data(request):
     try:
-        user = User.objects.get(username = request.data.get("username"))
+        user = User.objects.get(username = request.query_params.get("username"))
         serializer = UserSerializer(user)
         friend = Friend.objects.filter(
             (Q(user1=user) & Q(user2=request.user)) |

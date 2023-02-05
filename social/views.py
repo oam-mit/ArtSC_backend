@@ -1,6 +1,7 @@
 import requests
 
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 from rest_framework.decorators import api_view,authentication_classes,permission_classes
 from rest_framework.response import Response
@@ -12,6 +13,11 @@ from user.models import User
 from .models import Post,Category,Friend
 from .serializers import PostSerializer,CategorySerializer
 # Create your views here.
+
+@login_required
+def index(request):
+    return render(request,"social/index.html")
+
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -26,7 +32,7 @@ def get_all_posts(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_posts_for_category(request):
-    id = request.data.get("category_id")
+    id = request.query_params.get("category_id")
     posts = Post.objects.filter(category__id = id)
     serializer = PostSerializer(posts,many=True)
     return Response({
