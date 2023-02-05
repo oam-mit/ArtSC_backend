@@ -1,0 +1,36 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="{%static 'user/login-page.css' %}">
+ 
+</head>
+
+<body>
+  <main id="main-holder">
+    <h1 id="login-header">Login</h1>
+    
+    <div id="login-error-msg-holder">
+      <p id="login-error-msg">Invalid username <span id="error-msg-second-line">and/or password</span></p>
+    </div>
+    
+    <form id="login-form" method="post">
+        {%csrf_token%}
+      <input type="text" name="username" id="username-field" class="login-form-field" placeholder="Username">
+      <input type="text" name="first_name" id="username-field" class="login-form-field" placeholder="firstName">
+      <input type="text" name="last_name" id="username-field" class="login-form-field" placeholder="lastName">
+      <input type="email" name="email" id="username-field" class="login-form-field" placeholder="email">
+      <input type="password" name="password" id="password-field" class="login-form-field" placeholder="Password">
+
+      <button type="submit" id="login-form-submit" > Submit </button>
+    </form>
+    <a href="{%url 'user:login'%}">Already a user?</a>
+  
+  </main>
+</body>
+
+</html>

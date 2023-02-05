@@ -19,9 +19,6 @@ from .serializers import UserSerializer
 
 def login_user(request):
     if request.method =="POST":
-        print(request.GET)
-        print(request.POST.get('username'))
-        print(request.POST.get("password"))
         user = authenticate(username = request.POST.get('username'),password = request.POST.get("password"))
 
         if user is not None:
@@ -30,6 +27,32 @@ def login_user(request):
         else:
             return render(request,"user/login.html")
     return render(request,"user/login.html")
+
+
+def register(request):
+    if request.method == "POST":
+        try:
+            user = User(
+            username = request.POST.get("username"),
+            email = request.POST.get("email"),
+            first_name = request.POST.get("first_name"),
+            last_name = request.POST.get("last_name")
+        )
+            user.set_password(request.POST.get("password"))
+
+            user.save()
+
+            return redirect(reverse("user:login"))
+            
+        except Exception as e:
+            return render(request,"user/register.html")
+
+        
+
+        user.save()
+
+    return render(request,"user/register.html")
+
 
 def logout_user(request):
     logout(request)
