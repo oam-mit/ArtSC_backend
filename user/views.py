@@ -11,10 +11,11 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 
 from artsc.consts import Status
-from social.models import Friend
+from social.models import Friend,Post
+from social.serializers import PostSerializer
 
 from .models import User
-from .serializers import UserSerializer
+from .serializers import UserSerializer,GetUserSerializer
 # Create your views here.
 
 def login_user(request):
@@ -158,4 +159,16 @@ def change_profile_picture(request):
     return Response({
         "status":Status.SUCCESSFUL,
         "profile_photo":request.user.profile_photo.url
+    })
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_signedin_user(request):
+    serializer = GetUserSerializer(request.user)
+    posts = Post.objects.filter(user=request.user)
+    post_serializer = PostSerializer(posts,many = True)
+
+    return Response({
+        "user":serializer.data,
+        "posts": post_serializer.data
     })

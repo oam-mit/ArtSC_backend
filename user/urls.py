@@ -14,4 +14,5 @@ urlpatterns = [
     path("user/api/login/",views.Login.as_view(),name="api_user_login"),
     path("user/api/get_user_data/",views.get_user_data,name="api_get_user_data"),
     path("user/pi/change_profile_picture/",views.change_profile_picture,name="api_change_profile_picture"),
+    path("user/api/get_logged_in_user",views.get_signedin_user,name="api_get_logged_in_user"),
 ]
