@@ -74,10 +74,21 @@ def get_user_data(request):
     try:
         user = User.objects.get(username = request.data.get("username"))
         serializer = UserSerializer(user)
-        friend = Friend.objects.filter(Q(user1=user))
+        friend = Friend.objects.filter(
+            (Q(user1=user) & Q(user2=request.user)) |
+            (Q(user1=request.user) & Q(user2=user))
+        )
+        if friend.count() > 0:
+            if friend.first().accepted:
+                friend_status = "FRIEND"
+            else:
+                friend_status = "SENT"
+        else:
+            friend_status = "NOT A FRIEND"
         return Response({
             "status":Status.SUCCESSFUL,
-            "user":serializer.data
+            "user":serializer.data,
+            "friend": friend_status
         })
     
     except Exception as e:

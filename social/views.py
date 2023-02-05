@@ -23,6 +23,16 @@ def get_all_posts(request):
         "posts":serializer.data
     })
 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_posts_for_category(request):
+    id = request.data.get("category_id")
+    posts = Post.objects.filter(category__id = id)
+    serializer = PostSerializer(posts,many=True)
+    return Response({
+        "status":Status.SUCCESSFUL,
+        "posts":serializer.data
+    })
 
 
 @api_view(["POST"])
@@ -86,4 +96,5 @@ def send_friend_request(request):
             "status":Status.UNSUCCESSFUL,
             "error":e.__str__()
         })
+
 
