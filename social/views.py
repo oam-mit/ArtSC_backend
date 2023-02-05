@@ -74,9 +74,30 @@ def get_categories(request):
 def predict_category(request):
     files = {'file': request.data.get("file").read()}
 
-    r = requests.post("http://172.20.10.2:8000", files=files)
+    try:
+
+        r = requests.post("http://34.27.136.54:8080", files=files)
     
-    return Response(r.json())
+    except Exception as e:
+        return Response({
+            "status":Status.UNSUCCESSFUL,
+            "error":e.__str__()
+        })
+    
+    data = r.json()
+
+    category = Category.objects.get(
+        text = data.get("tag")
+    )
+
+    serializer = CategorySerializer(
+        category
+    )
+
+    return Response({
+        "status":Status.SUCCESSFUL,
+        "category":serializer.data
+    })
 
 
 @api_view(["POST"])
