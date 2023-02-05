@@ -84,6 +84,17 @@ def predict_category(request):
 def send_friend_request(request):
     try:
         to = User.objects.get(username=request.data.get("username"))
+        friend_requests = Friend.objects.filter(
+            user1=request.user,
+            user2 = to
+        )
+
+        if friend_requests.count() > 0:
+            return Response({
+                "status":Status.UNSUCCESSFUL,
+                "error":"Friend request already sent"
+            })
+        
         Friend.objects.create(
             user1=request.user,
             user2=to
