@@ -7,6 +7,7 @@ from user.models import User
 class Category(models.Model):
     text = models.CharField(max_length=100)
     display_name = models.CharField(max_length=100)
+    default_pic = models.ImageField(upload_to="category_pics",null=True)
 
     def __str__(self) -> str:
         return self.text

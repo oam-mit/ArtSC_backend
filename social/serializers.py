@@ -10,7 +10,7 @@ class CategorySerializer(ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ['text','display_name','id']
+        fields = ['text','display_name','id','default_pic']
 
 
 class PostSerializer(ModelSerializer):

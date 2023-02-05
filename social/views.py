@@ -92,6 +92,8 @@ def predict_category(request):
     
     data = r.json()
 
+    print(data)
+
     category = Category.objects.get(
         text = data.get("tag")
     )
