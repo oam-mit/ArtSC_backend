@@ -119,6 +119,8 @@ class Login(ObtainAuthToken):
 def get_user_data(request):
     try:
         user = User.objects.get(username = request.query_params.get("username"))
+        posts = Post.objects.filter(user = user)
+        post_serialzer = PostSerializer(posts,many = True)
         serializer = UserSerializer(user)
         friend = Friend.objects.filter(
             (Q(user1=user) & Q(user2=request.user)) |
@@ -137,7 +139,8 @@ def get_user_data(request):
         return Response({
             "status":Status.SUCCESSFUL,
             "user":serializer.data,
-            "friend": friend_status
+            "friend": friend_status,
+            "posts":post_serialzer.data
         })
     
     except Exception as e:
