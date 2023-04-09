@@ -157,7 +157,8 @@ def get_network(request):
     return Response({
         "status":Status.SUCCESSFUL, 
         "friend_requests_received":friend_requests_serialized.data,
-        "friends":friends_serialized.data
+        "friends":friends_serialized.data,
+        "your_username":request.user.username,
     })
 
     
