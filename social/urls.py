@@ -12,4 +12,6 @@ urlpatterns = [
     path("api/predict_category/",views.predict_category,name="api_predict_category"),
     path("api/send_friend_request/",views.send_friend_request,name="api_send_friend_request"),
     path("api/get_posts_for_category/",views.get_posts_for_category,name="api_get_posts_for_category"),
+    path("api/get_network/",views.get_network,name="api_get_network"),
+    path("api/confirm_friend_request/",views.confirm_friend_request,name="api_confirm_friend_request"),
 ]

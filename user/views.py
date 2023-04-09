@@ -130,7 +130,10 @@ def get_user_data(request):
             else:
                 friend_status = "SENT"
         else:
-            friend_status = "NOT A FRIEND"
+            if request.user.username == request.query_params.get("username"):
+                friend_status = "NOT REQUIRED"
+            else:   
+                friend_status = "NOT A FRIEND"
         return Response({
             "status":Status.SUCCESSFUL,
             "user":serializer.data,
@@ -172,3 +175,6 @@ def get_signedin_user(request):
         "user":serializer.data,
         "posts": post_serializer.data
     })
+
+
+

@@ -2,6 +2,7 @@ import requests
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
 from rest_framework.decorators import api_view,authentication_classes,permission_classes
 from rest_framework.response import Response
@@ -11,7 +12,7 @@ from artsc.consts import Status
 from user.models import User
 
 from .models import Post,Category,Friend
-from .serializers import PostSerializer,CategorySerializer
+from .serializers import PostSerializer,CategorySerializer,FriendSerializer
 # Create your views here.
 
 @login_required
@@ -82,9 +83,10 @@ def predict_category(request):
 
     try:
 
-        r = requests.post("http://34.27.136.54:8080", files=files)
+        r = requests.post("http://34.171.253.227:8080", files=files)
     
     except Exception as e:
+        print(e)
         return Response({
             "status":Status.UNSUCCESSFUL,
             "error":e.__str__()
@@ -133,6 +135,48 @@ def send_friend_request(request):
         })
     except Exception as e:
         return Response({
+            "status":Status.UNSUCCESSFUL,
+            "error":e.__str__()
+        })
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_network(request):
+    friend_requests= Friend.objects.filter(
+            (Q(user2=request.user) & Q(accepted = False))
+    )
+
+    friends = Friend.objects.filter(
+            (Q(user1=request.user) & Q(accepted = True)) |
+            (Q(user2=request.user) & Q(accepted=True))
+    )
+
+    friend_requests_serialized = FriendSerializer(friend_requests,many = True)
+    friends_serialized = FriendSerializer(friends,many = True)
+
+    return Response({
+        "status":Status.SUCCESSFUL, 
+        "friend_requests_received":friend_requests_serialized.data,
+        "friends":friends_serialized.data
+    })
+
+    
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def confirm_friend_request(request):
+    id = request.data.get("id")
+
+    friend = Friend.objects.get(id=id)
+    print(friend)
+    friend.accepted = True
+    try:
+        friend.save()
+
+        return Response({
+            "status":Status.SUCCESSFUL,
+        })
+    except Exception as e:
+          return Response({
             "status":Status.UNSUCCESSFUL,
             "error":e.__str__()
         })
