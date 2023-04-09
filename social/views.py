@@ -16,7 +16,7 @@ from .serializers import PostSerializer,CategorySerializer,FriendSerializer
 # Create your views here.
 
 @login_required
-def index(request):
+def index(request,*args,**kwargs):
     return render(request,"index.html")
 
 

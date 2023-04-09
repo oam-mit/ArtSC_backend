@@ -6,6 +6,10 @@ app_name = "social"
 
 urlpatterns = [
     path("",views.index,name="index"),
+    path("user/<str:username>",views.index,name="user"),
+    path("profile",views.index,name="profile"),
+    path("new_post",views.index,name="new_post"),
+    path("network",views.index,name="network"),
     path("api/get_categories/",views.get_categories,name="api_get_categories"),
     path("api/upload_post/",views.upload_post,name="api_upload_post"),
     path("api/get_all_posts/",views.get_all_posts,name="api_get_all_posts"),
